@@ -26,10 +26,8 @@ object Main {
         |  'connector' = 'print'
         |)
         |""".stripMargin)
-    tableEnv.executeSql(
-      """
-        |INSERT INTO print_sink
-        |SELECT a FROM csv_source
-        |""".stripMargin).await()
+    val table = tableEnv.sqlQuery("SELECT a FROM csv_source")
+    tableEnv.toDataStream(table).map(r => println(r.getField("a")))
+    execEnv.execute()
   }
 }
